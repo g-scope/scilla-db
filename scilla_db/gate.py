@@ -1,6 +1,6 @@
 def __generic_datatype_mismatch(
     value_str: str = "",
-    value_type: str = "",
+    value_type: type = "",
     value_name: str = "",
     expected_name: str = ""
 ):
@@ -75,7 +75,7 @@ def password_valid(
 
     if __too_something:
         __generic_string_length(
-            value_str=__password_len,
+            value_str=__password_str,
             value_length=__password_len,
             value_name="Username",
             too_type=__password_len < 3 and "short" or "long"

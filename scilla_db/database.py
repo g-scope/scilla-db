@@ -23,9 +23,20 @@ class DataModel(__BaseModel):
     nonce = CharField(default="")
 
 
+def get_account(
+    username: str = ""
+) -> AccountModel:
+    gate.username_valid(username)
+    return AccountModel.get(
+        AccountModel.account_username == username
+    )
+
+
 def create_account(
     username: str = "",
     password: str = "",
     email: str = ""
 ) -> AccountModel:
     gate.username_valid(username)
+    gate.password_valid(password)
+
