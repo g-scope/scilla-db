@@ -30,6 +30,21 @@ class DataModel(__BaseModel):
 database.create_tables([AccountModel, DataModel])
 
 
+def decrypt_and_return_account_data(
+    account: AccountModel,
+    password: str = ""
+) -> DataModel:
+    pass
+
+
+def encrypt_and_overwrite_account_data(
+    account: AccountModel,
+    password: str = "",
+    data: dict = {}
+) -> bool:
+    pass
+
+
 def get_data_by_account(
     account: AccountModel
 ) -> DataModel:
@@ -115,7 +130,7 @@ def create_account_data(
     else:
         __new_data = DataModel.create(
             account=account,
-            data="",
+            data=json.dumps(data),
             nonce=""
         )
 

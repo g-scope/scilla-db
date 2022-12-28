@@ -8,6 +8,6 @@ new_account = scilla_db.database.create_account(
 new_data = scilla_db.database.create_account_data(
     account=new_account,
     data={
-
+        "wah": "wah2?"
     }
 )
