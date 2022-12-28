@@ -1,23 +1,31 @@
 from peewee import *
+from scilla_db import gate
 
-__database = SqliteDatabase("test.db")
-__database.connect()
+database = SqliteDatabase("test.db")
+database.connect()
 
 
-class BaseModel(Model):
+class __BaseModel(Model):
     class Meta:
-        global __database
-        database = __database
+        database = database
 
 
-class AccountModel(BaseModel):
-    account_username = CharField(unique=True,default="")
+class AccountModel(__BaseModel):
+    account_username = CharField(unique=True, default="")
     account_password = CharField(default="")
     account_email = CharField(default="")
     account_salt = CharField(default="")
 
 
-class DataModel(BaseModel):
+class DataModel(__BaseModel):
     account = ForeignKeyField(AccountModel, backref='account-data')
     data = TextField(default="")
     nonce = CharField(default="")
+
+
+def create_account(
+    username: str = "",
+    password: str = "",
+    email: str = ""
+) -> AccountModel:
+    gate.username_valid(username)

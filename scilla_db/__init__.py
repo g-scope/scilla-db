@@ -1,3 +1,2 @@
 from scilla_db import database
-from scilla_db import encryption
-
+from scilla_db import gate
