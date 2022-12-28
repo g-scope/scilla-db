@@ -47,7 +47,7 @@ def username_valid(
     __username_len = len(username)
     __too_something = __username_len < 3 or __username_len > 16
 
-    if __too_something:
+    if __too_something is True:
         __generic_string_length(
             value_str=__username_str,
             value_length=__username_len,
@@ -73,11 +73,11 @@ def password_valid(
     __password_len = len(password)
     __too_something = __password_len < 8 or __password_len > 16
 
-    if __too_something:
+    if __too_something is True:
         __generic_string_length(
-            value_str=__password_str,
+            value_str="#"*__password_len,
             value_length=__password_len,
-            value_name="Username",
+            value_name="Password",
             too_type=__password_len < 3 and "short" or "long"
         )
 

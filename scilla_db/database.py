@@ -27,9 +27,13 @@ def get_account(
     username: str = ""
 ) -> AccountModel:
     gate.username_valid(username)
-    return AccountModel.get(
-        AccountModel.account_username == username
-    )
+    __result = None
+    try:
+        __result = AccountModel.get(
+            AccountModel.account_username == username
+        )
+    finally:
+        return __result
 
 
 def create_account(
@@ -37,6 +41,10 @@ def create_account(
     password: str = "",
     email: str = ""
 ) -> AccountModel:
-    gate.username_valid(username)
-    gate.password_valid(password)
+    gate.username_valid(username=username)
+    gate.password_valid(password=password)
 
+    if get_account(username) is AccountModel:
+        raise Exception(
+            "Account with that username already exists."
+        )
