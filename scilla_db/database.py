@@ -97,8 +97,11 @@ def create_account(
 
 def create_account_data(
     account: AccountModel,
+    password: str = "",
     data: dict = {}
 ) -> DataModel:
+    gate.password_valid(password)
+
     __account_type = type(account)
     __account_str = str(account)
 
@@ -126,14 +129,24 @@ def create_account_data(
     )
 
     if __existing_data is not None:
-        return __existing_data
+        encrypt_and_overwrite_account_data(
+            account=account,
+            password=password,
+            data=data
+        )
     else:
         __new_data = DataModel.create(
             account=account,
-            data=json.dumps(data),
+            data="",
             nonce=""
         )
 
         __new_data.save()
+
+        encrypt_and_overwrite_account_data(
+            account=account,
+            password=password,
+            data=data
+        )
 
         return __new_data
