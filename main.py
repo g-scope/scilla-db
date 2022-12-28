@@ -1,6 +1,6 @@
 import scilla_db
 
-scilla_db.database.create_account(
+print(scilla_db.database.create_account(
     username="username",
-    password="passwor"
-)
+    password="password"
+))
