@@ -186,7 +186,7 @@ def create_account(
             "Account with that username already exists."
         )
 
-    salt = secrets.token_bytes(16)
+    salt = secrets.token_bytes(32-len(password))
 
     new_account = AccountModel.create(
         account_username=username,

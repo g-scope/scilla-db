@@ -37,7 +37,7 @@ def set_data(
     password: str = "",
     data: dict = ()
 ) -> (bool, Exception):
-    __result, __exception = None, None
+    __result, __exception = False, None
     try:
         __result = database.encrypt_and_overwrite_account_data(
             account=account,
