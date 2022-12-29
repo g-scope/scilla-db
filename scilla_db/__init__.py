@@ -31,3 +31,36 @@ def get_account(
     finally:
         return __result, __exception
 
+
+def set_data(
+    account: database.AccountModel,
+    password: str = "",
+    data: dict = ()
+) -> (bool, Exception):
+    __result, __exception = None, None
+    try:
+        __result = database.encrypt_and_overwrite_account_data(
+            account=account,
+            password=password,
+            data=data
+        )
+    except Exception as e:
+        __exception = e
+    finally:
+        return __result, __exception
+
+
+def get_data(
+    account: database.AccountModel,
+    password: str = ""
+) -> (dict, Exception):
+    __result, __exception = None, None
+    try:
+        __result = database.get_decrypted_account_data(
+            account=account,
+            password=password
+        )
+    except Exception as e:
+        __exception = e
+    finally:
+        return __result, __exception
