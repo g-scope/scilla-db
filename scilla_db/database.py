@@ -42,7 +42,24 @@ def encrypt_and_overwrite_account_data(
     password: str = "",
     data: dict = {}
 ) -> bool:
-    pass
+    gate.password_valid(password)
+
+    __account_type = type(account)
+    __account_str = str(account)
+
+    if __account_type is not AccountModel:
+        gate.__generic_datatype_mismatch(
+            value_str=__account_str,
+            value_type=__account_type,
+            value_name="Account",
+            expected_name="AccountModel"
+        )
+
+    if hashlib.sha256(password).hexdigest() != account.account_password:
+        raise Exception("Password mismatch!")
+
+
+
 
 
 def get_data_by_account(
