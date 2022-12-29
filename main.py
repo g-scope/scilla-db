@@ -1,12 +1,12 @@
 import scilla_db
 
-new_account, __acc_failure = scilla_db.create_account(
+new_account, __fail_msg = scilla_db.create_account(
     username="cool_guy",
     password="coolpassword"
 )
 
-if __acc_failure is not None:
-    print("Account Creation Failed: " + str(__acc_failure))
+if __fail_msg is not None:
+    print("Account Creation Failed: " + str(__fail_msg))
 
 target_data = {
     "look_at_me": "i'm data!",
@@ -22,12 +22,12 @@ success, __fail_msg = scilla_db.set_data(
 if not success:
     print("set_data failed!: " + str(__fail_msg))
 
-data, __err = scilla_db.get_data(
+data, __fail_msg = scilla_db.get_data(
     account=new_account,
     password="coolpassword"
 )
 
-if __err is not None:
-    print("get_data failed!: " + str(__err))
+if __fail_msg is not None:
+    print("get_data failed!: " + str(__fail_msg))
 else:
     print("Hi!", data.get("hey"))
