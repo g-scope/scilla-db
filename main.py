@@ -1,5 +1,7 @@
 import scilla_db
 
+# Time for release
+
 new_account, __fail_msg = scilla_db.create_account(
     username="cool_guy",
     password="coolpassword"
