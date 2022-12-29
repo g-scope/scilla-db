@@ -31,11 +31,60 @@ class DataModel(__BaseModel):
 database.create_tables([AccountModel, DataModel])
 
 
+def get_account_data(
+    account: AccountModel
+) -> DataModel:
+    __result = None
+    try:
+        __result = DataModel.get(
+            DataModel.account == account
+        )
+    finally:
+        return __result
+
+
 def get_decrypted_account_data(
     account: AccountModel,
     password: str = ""
 ) -> DataModel:
-    pass
+    gate.password_valid(password)
+
+    __account_type = type(account)
+    __account_str = str(account)
+
+    if __account_type is not AccountModel:
+        gate.__generic_datatype_mismatch(
+            value_str=__account_str,
+            value_type=__account_type,
+            value_name="Account",
+            expected_name="AccountModel"
+        )
+
+    __account_data = get_account_data(account)
+
+    if not __account_data:
+        raise Exception("Data for this account, doesn't exist.")
+
+    if hashlib.sha256(password.encode()).hexdigest() != account.account_password:
+        raise Exception("Password mismatch!")
+
+    encryption_key = password.encode() + base64.b64decode(
+        str(account.account_salt)
+    )
+    nonce = base64.b64decode(
+        str(__account_data.nonce)
+    )
+
+    cipher = AES.new(encryption_key, AES.MODE_EAX, nonce=nonce)
+    data = json.loads(
+        cipher.decrypt(
+            base64.b64decode(
+                str(__account_data.data)
+            )
+        ).decode()
+    )
+
+    return data
 
 
 def encrypt_and_overwrite_account_data(
@@ -83,7 +132,7 @@ def encrypt_and_overwrite_account_data(
         )
 
     encryption_key = password.encode() + base64.b64decode(
-        account.account_salt
+        str(account.account_salt)
     )
 
     cipher = AES.new(encryption_key, AES.MODE_EAX)
