@@ -1,14 +1,20 @@
 import scilla_db
 
-new_account = scilla_db.database.create_account(
+new_account = scilla_db.database.get_account(
     username="username",
-    password="password"
 )
 
-new_data = scilla_db.database.create_account_data(
+current_data = scilla_db.database.encrypt_and_overwrite_account_data(
     account=new_account,
     password="password",
     data={
-        "wah": "wah2?"
+        "ha": "ha1!"
     }
 )
+
+returned_data = scilla_db.database.get_decrypted_account_data(
+    account=new_account,
+    password="password"
+)
+
+print(returned_data.get("ha"))

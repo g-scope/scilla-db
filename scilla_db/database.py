@@ -1,5 +1,6 @@
 from peewee import *
 from scilla_db import gate
+from Crypto.Cipher import AES
 import secrets
 import hashlib
 import base64
@@ -30,7 +31,7 @@ class DataModel(__BaseModel):
 database.create_tables([AccountModel, DataModel])
 
 
-def decrypt_and_return_account_data(
+def get_decrypted_account_data(
     account: AccountModel,
     password: str = ""
 ) -> DataModel:
@@ -40,7 +41,7 @@ def decrypt_and_return_account_data(
 def encrypt_and_overwrite_account_data(
     account: AccountModel,
     password: str = "",
-    data: dict = {}
+    data: dict = ()
 ) -> bool:
     gate.password_valid(password)
 
@@ -55,11 +56,48 @@ def encrypt_and_overwrite_account_data(
             expected_name="AccountModel"
         )
 
-    if hashlib.sha256(password).hexdigest() != account.account_password:
+    __data_type = type(data)
+    __data_str = str(data)
+
+    if __data_type is not dict:
+        gate.__generic_datatype_mismatch(
+            value_str=__data_str,
+            value_type=__data_type,
+            value_name="Data",
+            expected_name="dictionary"
+        )
+
+    if hashlib.sha256(password.encode()).hexdigest() != account.account_password:
         raise Exception("Password mismatch!")
 
+    __json_string = json.dumps(data)
+    __account_data = get_data_by_account(
+        account=account
+    )
 
+    if not __account_data:
+        __account_data = create_account_data(
+            account=account,
+            password=password,
+            data=data
+        )
 
+    encryption_key = password.encode() + base64.b64decode(
+        account.account_salt
+    )
+
+    cipher = AES.new(encryption_key, AES.MODE_EAX)
+
+    __account_data.nonce = base64.b64encode(cipher.nonce).decode()
+    __account_data.data = base64.b64encode(
+        cipher.encrypt(
+            json.dumps(data).encode()
+        )
+    ).decode()
+
+    __account_data.save()
+
+    return True
 
 
 def get_data_by_account(
@@ -106,7 +144,7 @@ def create_account(
         account_password=hashlib.sha256(
             password.encode()
         ).hexdigest(),
-        account_salt=base64.b64encode(salt)
+        account_salt=base64.b64encode(salt).decode()
     )
 
     return new_account
@@ -115,7 +153,7 @@ def create_account(
 def create_account_data(
     account: AccountModel,
     password: str = "",
-    data: dict = {}
+    data: dict = ()
 ) -> DataModel:
     gate.password_valid(password)
 
@@ -146,11 +184,7 @@ def create_account_data(
     )
 
     if __existing_data is not None:
-        encrypt_and_overwrite_account_data(
-            account=account,
-            password=password,
-            data=data
-        )
+        raise Exception("DataModel for this account already exists!")
     else:
         __new_data = DataModel.create(
             account=account,
