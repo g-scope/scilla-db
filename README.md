@@ -22,6 +22,20 @@ This is not a scalable package, this is meant for small projects.
     # Account creation succcessful!
     print(new_account.account_username) # username
     ```
+* Get an Account:
+  ```python
+  import scilla_db
+  
+  account, _err = scilla_db.get_account(
+    username="username"
+  )
+  
+  if _err is not None:
+    raise _err
+  
+  # successfully retrieved an account.
+  print(account.account_username)
+  ```
 * Assign Data to Account:
     ```python
     import scilla_db
