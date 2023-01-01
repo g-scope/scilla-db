@@ -4,6 +4,7 @@ def __generic_datatype_mismatch(
     value_name: str = "",
     expected_name: str = ""
 ):
+    """A shortcut function that raises an exception with a message format."""
     raise Exception(
         "%s is not a %s, got: '%s'[%s]" % (
             value_name,
@@ -20,6 +21,7 @@ def __generic_string_length(
     value_name: str = "",
     too_type: str = ""
 ):
+    """A shortcut function that raises an exception with a message format."""
     raise Exception(
         "%s is too %s, %d char(s) long. '%s'" % (
             value_name,
@@ -33,6 +35,7 @@ def __generic_string_length(
 def username_valid(
     username: str = ""
 ):
+    """A function that handles base rules for a username, length etc."""
     __username_type = type(username)
     __username_str = str(username)
 
@@ -59,6 +62,7 @@ def username_valid(
 def password_valid(
     password: str = ""
 ):
+    """A function that handles basic rules for a password, length etc."""
     __password_type = type(password)
     __password_str = str(password)
 

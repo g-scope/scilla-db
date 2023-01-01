@@ -11,11 +11,13 @@ database.connect()
 
 
 class __BaseModel(Model):
+    """The base class for all data models."""
     class Meta:
         database = database
 
 
 class AccountModel(__BaseModel):
+    """The main account of a user."""
     account_username = CharField(unique=True, default="")
     account_password = CharField(default="")
     account_email = CharField(default="")
@@ -23,6 +25,7 @@ class AccountModel(__BaseModel):
 
 
 class DataModel(__BaseModel):
+    """Data that is assigned to an account."""
     account = ForeignKeyField(AccountModel, backref='account-data')
     data = TextField(default="")
     nonce = CharField(default="")
@@ -34,6 +37,7 @@ database.create_tables([AccountModel, DataModel])
 def get_account_data(
     account: AccountModel
 ) -> DataModel:
+    """Searches for data comparing by .account and the parameter account."""
     __result = None
     try:
         __result = DataModel.get(
@@ -47,6 +51,7 @@ def get_decrypted_account_data(
     account: AccountModel,
     password: str = ""
 ) -> DataModel:
+    """Locates and decrypts data with the given password. Returns as a dictionary."""
     gate.password_valid(password)
 
     __account_type = type(account)
@@ -92,6 +97,7 @@ def encrypt_and_overwrite_account_data(
     password: str = "",
     data: dict = ()
 ) -> bool:
+    """Overwrites the current data."""
     gate.password_valid(password)
 
     __account_type = type(account)
@@ -152,6 +158,7 @@ def encrypt_and_overwrite_account_data(
 def get_data_by_account(
     account: AccountModel
 ) -> DataModel:
+    """Locates data but doesn't decrypt it."""
     __result = None
     try:
         __result = DataModel.get(
@@ -164,6 +171,7 @@ def get_data_by_account(
 def get_account(
     username: str = ""
 ) -> AccountModel:
+    """Locates an account by username."""
     gate.username_valid(username)
     __result = None
     try:
@@ -178,6 +186,7 @@ def create_account(
     username: str = "",
     password: str = "",
 ) -> AccountModel:
+    """Creates an account, requires a username and password."""
     gate.username_valid(username=username)
     gate.password_valid(password=password)
 
@@ -204,6 +213,7 @@ def create_account_data(
     password: str = "",
     data: dict = ()
 ) -> DataModel:
+    """Creates new data for an account, requires an account, password, and data."""
     gate.password_valid(password)
 
     __account_type = type(account)
